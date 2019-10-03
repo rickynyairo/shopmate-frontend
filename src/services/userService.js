@@ -13,8 +13,8 @@ class UserService extends EventEmitter {
     axios.defaults.headers.common["Content-Type"] = "application/json";
     axios.defaults.headers.common["Accept"] = "application/json";
   };
-  setCurrentUser = user => {
-    Cookie.set("accessToken", user.accessToken);
+  setCurrentUser = ({ accessToken }) => {
+    Cookie.set("accessToken", accessToken);
   };
   signUp = ({ email, password, name }) => {
     return new Promise((resolve, reject) => {
@@ -60,13 +60,13 @@ class UserService extends EventEmitter {
     return new Promise((resolve, reject) => {
       axios
         .get(systemConfig.serverBaseUrl + `/customer`, {
-          headers: { "user-key": `${accessToken}` }
+          headers: { "USER-KEY": `${accessToken}` }
         })
         .then(response => {
           resolve(response.data);
-          this.setCurrentUser(response.data);
+          this.setCurrentUser({ accessToken });
           axios.interceptors.request.use(config => {
-            config.headers["user-key"] = response.data.accessToken;
+            config.headers["USER-KEY"] = accessToken;
             return config;
           });
         })

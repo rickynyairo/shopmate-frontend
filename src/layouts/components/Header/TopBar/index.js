@@ -9,6 +9,7 @@ import styles from "./styles";
 import Button from "@material-ui/core/Button";
 import * as alertActions from "../../../../store/actions/alerts";
 import * as userActions from "../../../../store/actions/user";
+import * as cartActions from "../../../../store/actions/cart";
 
 const links = [
   {
@@ -28,9 +29,11 @@ const links = [
 class TopBar extends React.Component {
   componentDidMount() {
     this.props.getCustomer();
+    this.props.getCartId();
+    this.props.getItemsInCart();
   }
   render() {
-    const { classes, authenticated, customer, logOut } = this.props;
+    const { classes, authenticated, customer, logOut, itemCount } = this.props;
     return (
       <AppBar className={classes.topBar}>
         <Toolbar className={classes.toolbar}>
@@ -108,7 +111,7 @@ class TopBar extends React.Component {
               >
                 <Badge
                   classes={{ badge: classes.badge }}
-                  badgeContent={1}
+                  badgeContent={itemCount}
                   color="primary"
                 >
                   <img
@@ -133,11 +136,12 @@ class TopBar extends React.Component {
 TopBar.propTypes = {
   classes: PropTypes.object.isRequired
 };
-function mapStateToProps({ user: { customer } }) {
+function mapStateToProps({ user: { customer }, cart: { shoppingCart } }) {
   return {
     customer: customer.data,
     authenticated: customer.authenticated,
-    error: customer.error
+    error: customer.error,
+    itemCount: shoppingCart.count
   };
 }
 function mapDispatchToProps(dispatch) {
@@ -146,6 +150,8 @@ function mapDispatchToProps(dispatch) {
       showAuth: alertActions.showAuth,
       hideAuth: alertActions.hideAuth,
       showCart: alertActions.showCart,
+      getCartId: cartActions.getCartId,
+      getItemsInCart: cartActions.getItemsInCart,
       getCustomer: userActions.getCustomer,
       logOut: userActions.signOut
     },

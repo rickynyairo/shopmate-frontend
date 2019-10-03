@@ -20,6 +20,7 @@ import React, { Component } from "react";
 import {
   withStyles,
   Radio,
+  RadioGroup,
   Checkbox,
   Fab,
   CircularProgress,
@@ -39,12 +40,18 @@ import { Carousel } from "react-responsive-carousel";
 import systemConfig from "../../config/system";
 import * as productActions from "../../store/actions/product";
 import * as alertActions from "../../store/actions/alerts";
+import * as cartActions from "../../store/actions/cart";
 import styles from "./styles";
 import { Container, Section } from "../../components/Layout";
 import Review from "../../components/Review";
 import ReviewForm from "./ReviewForm";
 
 class Product extends Component {
+  state = {
+    quantity: 0,
+    colour: "",
+    size: ""
+  };
   componentDidMount() {
     const {
       match: { params }
@@ -59,7 +66,29 @@ class Product extends Component {
       product_id: params.id
     });
   }
-
+  handleAddToCart = () => {
+    const { addToCart, product, cartId, updateQuantity } = this.props;
+    // check if item is in cart
+    const inCart = this.props.cartItems.filter(
+      item => item.product_id === product.product_id
+    );
+    if (inCart.length > 0) {
+      // item exists in cart
+      // increase item quantity
+      return updateQuantity(inCart[0], inCart[0].quantity + 1);
+    }
+    addToCart({ ...product, cart_id: cartId });
+  };
+  increaseQuantity = () => {
+    this.setState({ quantity: this.state.quantity + 1 });
+  };
+  decreaseQuantity = () => {
+    const { quantity } = this.state;
+    this.setState({ quantity: quantity === 0 ? 0 : quantity - 1 });
+  };
+  handleColourChange = event => {
+    this.setState({ colour: event.target.value });
+  };
   render() {
     const {
       classes,
@@ -67,7 +96,8 @@ class Product extends Component {
       loading,
       locations,
       locationsLoading,
-      match: { params }
+      match: { params },
+      authenticated
     } = this.props;
 
     const isLoading = loading || !product.image || locationsLoading;
@@ -150,69 +180,72 @@ class Product extends Component {
                         <span className={classes.lightTitle}> Colour </span>
                       </div>
                       <div>
-                        <Radio
-                          style={{ padding: 2, color: "#6eb2fb" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="blue"
-                          name="radio-button-demo"
-                          aria-label="blue"
-                          className="product-details-color"
-                        />
-                        <Radio
-                          style={{ padding: 2, color: "#00d3ca" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="cyan"
-                          name="radio-button-demo"
-                          aria-label="cyan"
-                          className="product-details-color"
-                        />
-                        <Radio
-                          style={{ padding: 2, color: "#f62f5e" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="red"
-                          name="radio-button-demo"
-                          aria-label="red"
-                          className="product-details-color"
-                        />
-                        <Radio
-                          style={{ padding: 2, color: "#fe5c07" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="orange"
-                          name="radio-button-demo"
-                          aria-label="orange"
-                          className="product-details-color"
-                        />
-                        <Radio
-                          style={{ padding: 2, color: "#f8e71c" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="yellow"
-                          name="radio-button-demo"
-                          aria-label="yellow"
-                          className="product-details-color"
-                        />
-                        <Radio
-                          style={{ padding: 2, color: "#7ed321" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="green"
-                          name="radio-button-demo"
-                          aria-label="green"
-                          className="product-details-color"
-                        />
-                        <Radio
-                          style={{ padding: 2, color: "#9013fe" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="purple"
-                          name="radio-button-demo"
-                          aria-label="purple"
-                          className="product-details-color"
-                        />
+                        <RadioGroup style={{ display: "inline" }}>
+                          <Radio
+                            style={{ padding: 2, color: "#6eb2fb" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="blue"
+                            name="radio-button-demo"
+                            aria-label="blue"
+                            className="product-details-color"
+                            onClick={this.handleColourChange}
+                          />
+                          <Radio
+                            style={{ padding: 2, color: "#00d3ca" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="cyan"
+                            name="radio-button-demo"
+                            aria-label="cyan"
+                            className="product-details-color"
+                          />
+                          <Radio
+                            style={{ padding: 2, color: "#f62f5e" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="red"
+                            name="radio-button-demo"
+                            aria-label="red"
+                            className="product-details-color"
+                          />
+                          <Radio
+                            style={{ padding: 2, color: "#fe5c07" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="orange"
+                            name="radio-button-demo"
+                            aria-label="orange"
+                            className="product-details-color"
+                          />
+                          <Radio
+                            style={{ padding: 2, color: "#f8e71c" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="yellow"
+                            name="radio-button-demo"
+                            aria-label="yellow"
+                            className="product-details-color"
+                          />
+                          <Radio
+                            style={{ padding: 2, color: "#7ed321" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="green"
+                            name="radio-button-demo"
+                            aria-label="green"
+                            className="product-details-color"
+                          />
+                          <Radio
+                            style={{ padding: 2, color: "#9013fe" }}
+                            size="small"
+                            icon={<FiberManualRecord />}
+                            value="purple"
+                            name="radio-button-demo"
+                            aria-label="purple"
+                            className="product-details-color"
+                          />
+                        </RadioGroup>
                       </div>
                     </div>
                     <div className="w-full my-8">
@@ -296,6 +329,7 @@ class Product extends Component {
                         size="small"
                         aria-label="Subtract"
                         className={classes.addRemoveIcon}
+                        onClick={this.decreaseQuantity}
                       >
                         <SubtractIcon />
                       </Fab>
@@ -305,7 +339,7 @@ class Product extends Component {
                           className={classes.addRemoveText}
                           name="product-details-quantity"
                         >
-                          2
+                          {this.state.quantity}
                         </span>
                       </div>
 
@@ -313,6 +347,7 @@ class Product extends Component {
                         size="small"
                         aria-label="Add"
                         className={`increase-quantity ${classes.addRemoveIcon}`}
+                        onClick={this.increaseQuantity}
                       >
                         <AddIcon />
                       </Fab>
@@ -323,6 +358,7 @@ class Product extends Component {
                           color="primary"
                           size="large"
                           id="btnCart"
+                          onClick={this.handleAddToCart}
                           style={{ borderRadius: 60, height: 60, width: 220 }}
                         >
                           <span className={classes.submitButtonText}>
@@ -358,18 +394,22 @@ class Product extends Component {
                 </Hidden>
                 <ReviewForm productId={params.id} />
               </div>
-              <div className="w-full flex justify-center align-middle py-8">
-                <Link
-                  onClick={() => {
-                    this.props.showAuth(false);
-                  }}
-                  color={"primary"}
-                  style={{ cursor: "pointer", color: "red" }}
-                >
-                  Log In
-                </Link>{" "}
-                <span className="ml-2">to Add a Review.</span>
-              </div>
+              {!authenticated ? (
+                <div className="w-full flex justify-center align-middle py-8">
+                  <Link
+                    onClick={() => {
+                      this.props.showAuth(false);
+                    }}
+                    color={"primary"}
+                    style={{ cursor: "pointer", color: "red" }}
+                  >
+                    Log In
+                  </Link>{" "}
+                  <span className="ml-2">to Add a Review.</span>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           )}
         </Container>
@@ -384,18 +424,25 @@ function mapDispatchToProps(dispatch) {
       getSingleProduct: productActions.getSingleProduct,
       getProductDetails: productActions.getProductDetails,
       getProductLocations: productActions.getProductLocations,
-      showAuth: alertActions.showAuth
+      showAuth: alertActions.showAuth,
+      addToCart: cartActions.addToCart,
+      emptyCart: cartActions.emptyCart,
+      updateQuantity: cartActions.updateQuantity
     },
     dispatch
   );
 }
 
-function mapStateToProps({ product, cart, auth }) {
+function mapStateToProps({ product, cart, user }) {
   return {
     product: product.item.data,
     locations: product.locations.data,
     locationsLoading: product.locations.isLoading,
-    loading: product.item.isLoading
+    loading: product.item.isLoading,
+    isEmpty: cart.shoppingCart.isEmpty,
+    cartItems: cart.shoppingCart.items,
+    cartId: cart.shoppingCart.cart_id,
+    authenticated: user.customer.authenticated
   };
 }
 
