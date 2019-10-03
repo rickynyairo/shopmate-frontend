@@ -46,7 +46,7 @@ class NavBar extends React.Component {
   }
 
   render() {
-    const { classes, brand } = this.props;
+    const { classes, brand, itemCount } = this.props;
 
     const brandComponent = (
       <Link to={"/"} className={classes.brand}>
@@ -129,7 +129,7 @@ class NavBar extends React.Component {
                     badge: classes.badge
                   }}
                   id="menuCartQuantity"
-                  badgeContent={2}
+                  badgeContent={itemCount}
                   color="primary"
                 >
                   <img
@@ -191,7 +191,11 @@ NavBar.propTypes = {
   fixed: PropTypes.bool,
   absolute: PropTypes.bool
 };
-
+function mapStateToProps({ cart: { shoppingCart } }) {
+  return {
+    itemCount: shoppingCart.count
+  };
+}
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
@@ -204,7 +208,7 @@ function mapDispatchToProps(dispatch) {
 
 export default withStyles(styles, { withTheme: true })(
   connect(
-    null,
+    mapStateToProps,
     mapDispatchToProps
   )(NavBar)
 );

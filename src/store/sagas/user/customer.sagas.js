@@ -14,6 +14,7 @@ import {
   SIGN_OUT_SUCCESS
 } from "../../actions/user";
 import { SHOW_TOAST, HIDE_AUTH } from "../../actions/alerts";
+
 function* signInSaga(action) {
   try {
     const data = yield call(userService.signIn, action.payload);
@@ -85,13 +86,13 @@ function* getCustomerSaga() {
       type: GET_CUSTOMER_SUCCESS,
       payload: data
     });
-    yield put({
-      type: SHOW_TOAST,
-      payload: {
-        variant: "success",
-        message: `Welcome back ${data.customer.name} !`
-      }
-    });
+    // yield put({
+    //   type: SHOW_TOAST,
+    //   payload: {
+    //     variant: "success",
+    //     message: `Welcome back ${data.name} !`
+    //   }
+    // });
   } catch (error) {
     yield put({
       type: GET_CUSTOMER_FAIL,
