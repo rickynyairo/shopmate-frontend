@@ -19,8 +19,6 @@ NB: YOU CAN STYLE AND CUSTOMISE THIS PAGE, BUT YOU HAVE TO USE OUR DEFAULT CLASS
 import React, { Component } from "react";
 import {
   withStyles,
-  Radio,
-  RadioGroup,
   Checkbox,
   Fab,
   CircularProgress,
@@ -33,7 +31,6 @@ import { bindActionCreators } from "redux";
 import connect from "react-redux/es/connect/connect";
 import AddIcon from "@material-ui/icons/Add";
 import SubtractIcon from "@material-ui/icons/Remove";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 import StarRatings from "react-star-ratings";
 import classNames from "classnames";
 import { Carousel } from "react-responsive-carousel";
@@ -45,7 +42,7 @@ import styles from "./styles";
 import { Container, Section } from "../../components/Layout";
 import Review from "../../components/Review";
 import ReviewForm from "./ReviewForm";
-
+import ColourPicker from "../../layouts/components/Common/ColourPicker";
 class Product extends Component {
   state = {
     quantity: 0,
@@ -179,74 +176,10 @@ class Product extends Component {
                       <div className="w-full mb-2">
                         <span className={classes.lightTitle}> Colour </span>
                       </div>
-                      <div>
-                        <RadioGroup style={{ display: "inline" }}>
-                          <Radio
-                            style={{ padding: 2, color: "#6eb2fb" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="blue"
-                            name="radio-button-demo"
-                            aria-label="blue"
-                            className="product-details-color"
-                            onClick={this.handleColourChange}
-                          />
-                          <Radio
-                            style={{ padding: 2, color: "#00d3ca" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="cyan"
-                            name="radio-button-demo"
-                            aria-label="cyan"
-                            className="product-details-color"
-                          />
-                          <Radio
-                            style={{ padding: 2, color: "#f62f5e" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="red"
-                            name="radio-button-demo"
-                            aria-label="red"
-                            className="product-details-color"
-                          />
-                          <Radio
-                            style={{ padding: 2, color: "#fe5c07" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="orange"
-                            name="radio-button-demo"
-                            aria-label="orange"
-                            className="product-details-color"
-                          />
-                          <Radio
-                            style={{ padding: 2, color: "#f8e71c" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="yellow"
-                            name="radio-button-demo"
-                            aria-label="yellow"
-                            className="product-details-color"
-                          />
-                          <Radio
-                            style={{ padding: 2, color: "#7ed321" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="green"
-                            name="radio-button-demo"
-                            aria-label="green"
-                            className="product-details-color"
-                          />
-                          <Radio
-                            style={{ padding: 2, color: "#9013fe" }}
-                            size="small"
-                            icon={<FiberManualRecord />}
-                            value="purple"
-                            name="radio-button-demo"
-                            aria-label="purple"
-                            className="product-details-color"
-                          />
-                        </RadioGroup>
-                      </div>
+                      <ColourPicker
+                        colours={["cyan", "blue", "red", "purple"]}
+                        handleColourChange={this.handleColourChange}
+                      />
                     </div>
                     <div className="w-full my-8">
                       <div className="w-full mb-2">
