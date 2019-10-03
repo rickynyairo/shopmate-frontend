@@ -14,7 +14,6 @@ import React, { Component } from "react";
 import {
   withStyles,
   Paper,
-  Radio,
   Checkbox,
   Button,
   Fab,
@@ -25,27 +24,49 @@ import withWidth from "@material-ui/core/withWidth";
 import { withRouter } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import connect from "react-redux/es/connect/connect";
-import FiberManualRecord from "@material-ui/icons/FiberManualRecord";
 import Close from "@material-ui/icons/Close";
-import * as productActions from "../../store/actions/products";
+import * as Actions from "../../store/actions/products";
 import styles from "./styles";
 import { Container, Section } from "../../components/Layout";
 import ListProduct from "../../components/ListProduct";
 import Banner from "../../components/Banner";
 import SubscribeBar from "../../components/SubscribeBar";
+import Department from "./Department";
+import Category from "./Category";
+import ColourPicker from "../../layouts/components/Common/ColourPicker";
 import "./styles.css";
 
 class Home extends Component {
-  componentWillMount() {
-    this.props.getAllProducts({
-      page: 1,
-      limit: 9,
-      description_length: 120
+  state = {
+    page: 1,
+    limit: 9,
+    description_length: 120,
+    selectedCategory: {},
+    selectedDepartment: {}
+  };
+  componentDidMount() {
+    const { page, limit, description_length } = this.state;
+    const { getAllProducts, getAllCategories, getAllDepartments } = this.props;
+    getAllProducts({
+      page,
+      limit,
+      description_length
     });
+    getAllCategories();
+    getAllDepartments();
   }
-
+  handleSelectCategory = event => {
+    this.setState({
+      selectedCategory: event.target.value
+    });
+  };
+  handleSelectDepartment = event => {
+    this.setState({
+      selectedDepartment: event.target.value
+    });
+  };
   render() {
-    const { classes, products } = this.props;
+    const { classes, products, categories, departments } = this.props;
 
     let currentProducts = products;
 
@@ -65,11 +86,27 @@ class Home extends Component {
                     <div className={classes.filterItems}>
                       <div className="py-1">
                         <span className={classes.isGrey}>Category: </span>
-                        <span>Regional</span>
+                        {categories ? (
+                          <Category
+                            handleSelectCategory={this.handleSelectCategory}
+                            categories={categories}
+                            currentCategory={this.state.selectedCategory}
+                          />
+                        ) : (
+                          ""
+                        )}
                       </div>
                       <div className="py-1 pb-2">
                         <span className={classes.isGrey}>Department: </span>
-                        <span>French</span>
+                        {departments ? (
+                          <Department
+                            handleSelectDepartment={this.handleSelectDepartment}
+                            departments={departments}
+                            currentDepartment={this.state.selectedDepartment}
+                          />
+                        ) : (
+                          ""
+                        )}
                       </div>
                     </div>
                   </div>
@@ -79,61 +116,9 @@ class Home extends Component {
                         <span className={classes.controlsTitle}>Color</span>
                       </div>
                       <div className={classes.colorRadiosContainer}>
-                        <Radio
-                          style={{ padding: 0, color: "#6eb2fb" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="a"
-                          name="radio-button-demo"
-                          aria-label="A"
-                        />
-                        <Radio
-                          style={{ padding: 0, color: "#00d3ca" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="b"
-                          name="radio-button-demo"
-                          aria-label="B"
-                        />
-                        <Radio
-                          style={{ padding: 0, color: "#f62f5e" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="c"
-                          name="radio-button-demo"
-                          aria-label="C"
-                        />
-                        <Radio
-                          style={{ padding: 0, color: "#fe5c07" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="d"
-                          name="radio-button-demo"
-                          aria-label="D"
-                        />
-                        <Radio
-                          style={{ padding: 0, color: "#f8e71c" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="e"
-                          name="radio-button-demo"
-                          aria-label="E"
-                        />
-                        <Radio
-                          style={{ padding: 0, color: "#7ed321" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="f"
-                          name="radio-button-demo"
-                          aria-label="F"
-                        />
-                        <Radio
-                          style={{ padding: 0, color: "#9013fe" }}
-                          size="small"
-                          icon={<FiberManualRecord />}
-                          value="g"
-                          name="radio-button-demo"
-                          aria-label="G"
+                        <ColourPicker
+                          colours={["cyan", "blue", "red", "purple"]}
+                          handleColourChange={() => {}}
                         />
                       </div>
                     </div>
@@ -299,15 +284,23 @@ class Home extends Component {
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
     {
-      getAllProducts: productActions.getAllProducts
+      getAllProducts: Actions.getAllProducts,
+      getAllCategories: Actions.getAllCategories,
+      getSingleDepartment: Actions.getSingleDepartment,
+      getAllDepartments: Actions.getAllDepartments,
+      getDepartmentCategories: Actions.getDepartmentCategories
     },
     dispatch
   );
 }
 
-function mapStateToProps({ products, categories, departments }) {
+function mapStateToProps({ products }) {
   return {
-    products: products.all.data.rows
+    products: products.all.data.rows,
+    categories: products.categories.categories,
+    departments: products.departments.departments,
+    currentDepartment: products.departments.currentDepartment,
+    currentCategory: products.departments.currentCategory
   };
 }
 
