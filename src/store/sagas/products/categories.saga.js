@@ -68,7 +68,7 @@ function* getProductCategorySaga(action) {
 function* getDepartmentCategoriesSaga(action) {
   try {
     const items = yield call(
-      filterService.getDepartmentCategories,
+      filterService.getCategoriesInDepartment,
       action.payload
     );
     yield put({
@@ -76,6 +76,7 @@ function* getDepartmentCategoriesSaga(action) {
       payload: items
     });
   } catch (error) {
+    console.log(error);
     yield put({
       type: GET_DEPARTMENT_CATEGORIES_FAIL,
       payload: error

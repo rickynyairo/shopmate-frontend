@@ -60,13 +60,20 @@ class Home extends Component {
       selectedCategory: event.target.value
     });
   };
-  handleSelectDepartment = event => {
-    this.setState({
+  handleSelectDepartment = async event => {
+    await this.setState({
       selectedDepartment: event.target.value
     });
+    this.props.getDepartmentCategories(this.state.selectedDepartment);
   };
   render() {
-    const { classes, products, categories, departments } = this.props;
+    const {
+      classes,
+      products,
+      categories,
+      departments,
+      categoriesInDepartment
+    } = this.props;
 
     let currentProducts = products;
 
@@ -84,18 +91,6 @@ class Home extends Component {
                       </span>
                     </div>
                     <div className={classes.filterItems}>
-                      <div className="py-1">
-                        <span className={classes.isGrey}>Category: </span>
-                        {categories ? (
-                          <Category
-                            handleSelectCategory={this.handleSelectCategory}
-                            categories={categories}
-                            currentCategory={this.state.selectedCategory}
-                          />
-                        ) : (
-                          ""
-                        )}
-                      </div>
                       <div className="py-1 pb-2">
                         <span className={classes.isGrey}>Department: </span>
                         {departments ? (
@@ -103,6 +98,18 @@ class Home extends Component {
                             handleSelectDepartment={this.handleSelectDepartment}
                             departments={departments}
                             currentDepartment={this.state.selectedDepartment}
+                          />
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                      <div className="py-1">
+                        <span className={classes.isGrey}>Category: </span>
+                        {categories ? (
+                          <Category
+                            handleSelectCategory={this.handleSelectCategory}
+                            categories={categoriesInDepartment || categories}
+                            currentCategory={this.state.selectedCategory}
                           />
                         ) : (
                           ""
@@ -300,7 +307,8 @@ function mapStateToProps({ products }) {
     categories: products.categories.categories,
     departments: products.departments.departments,
     currentDepartment: products.departments.currentDepartment,
-    currentCategory: products.departments.currentCategory
+    currentCategory: products.departments.currentCategory,
+    categoriesInDepartment: products.categories.departmentCategories
   };
 }
 

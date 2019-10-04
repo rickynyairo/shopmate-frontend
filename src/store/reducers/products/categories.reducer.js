@@ -24,6 +24,11 @@ const categories = (state = initialState, action) => {
         error: action.payload
       };
     }
+    case Actions.GET_DEPARTMENT_CATEGORIES: {
+      return {
+        ...state
+      };
+    }
     case Actions.GET_DEPARTMENT_CATEGORIES_SUCCESS: {
       return {
         ...state,
